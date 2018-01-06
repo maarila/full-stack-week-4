@@ -1,6 +1,6 @@
 const listHelper = require("../utils/list_helper");
 
-describe("total likes", () => {
+describe("favourite blog", () => {
   const emptyList = [];
 
   const listWithOneBlog = [
@@ -43,19 +43,18 @@ describe("total likes", () => {
     }
   ];
 
-  test("when the list is empty, likes equal zero", () => {
-    const result = listHelper.totalLikes(emptyList);
-    expect(result).toBe(0);
+  test("when list of blogs is empty favourite blog returns an empty array", () => {
+    const result = listHelper.favouriteBlog(emptyList);
+    expect(result).toEqual([]);
   });
 
-  test("when list has only one blog equals the likes of that", () => {
-    const result = listHelper.totalLikes(listWithOneBlog);
-    expect(result).toBe(5);
+  test("when list of blogs has one item returns said blog", () => {
+    const result = listHelper.favouriteBlog(listWithOneBlog);
+    expect(result.title).toBe("Go To Statement Considered Harmful");
   });
 
-  test("when list has many blogs the likes equal the sum of all likes", () => {
-    const result = listHelper.totalLikes(listWithManyBlogs);
-    expect(result).toBe(15);
+  test("when given a larger list of blogs returns the one with the most likes", () => {
+    const result = listHelper.favouriteBlog(listWithManyBlogs);
+    expect(result.title).toBe("Web Developer Roadmap 2018");
   });
-
 });
