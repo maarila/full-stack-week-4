@@ -67,10 +67,12 @@ describe("most blogs", () => {
   test("when the list contains one blog, most blogs returns its author", () => {
     const result = listHelper.mostBlogs(listWithOneBlog);
     expect(result.author).toBe("Edsger W. Dijkstra");
+    expect(result.blogs).toBe(1);
   });
 
   test("when the list has many blogs, most blogs returns the author with most blogs", () => {
     const result = listHelper.mostBlogs(listWithManyBlogs);
     expect(result.author).toBe("Kamran Ahmed");
+    expect(result.blogs).toBe(3);
   });
 });
