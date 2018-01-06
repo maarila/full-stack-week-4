@@ -55,9 +55,40 @@ const mostBlogs = (blogs) => {
   }, []);
 };
 
+const mostLikes = (blogs) => {
+  let blogsPerAuthor = [];
+
+  blogs.forEach((blog) => {
+    const entryExists = blogsPerAuthor.filter(
+      (existing) => existing.author === blog.author
+    );
+
+    if (blogsPerAuthor.length > 0 && entryExists.length > 0) {
+      const addLikes = {
+        author: entryExists[0].author,
+        likes: entryExists[0].likes + blog.likes
+      };
+
+      blogsPerAuthor = blogsPerAuthor
+        .filter((existingBlog) => existingBlog.author !== blog.author)
+        .concat(addLikes);
+    } else {
+      const addNewAuthor = {
+        author: blog.author,
+        likes: blog.likes
+      };
+      blogsPerAuthor = blogsPerAuthor.concat(addNewAuthor);
+    }
+  });
+  return blogsPerAuthor.reduce((a, b) => {
+    return a.likes > b.likes ? a : b;
+  }, []);
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favouriteBlog,
-  mostBlogs
+  mostBlogs, 
+  mostLikes
 };
