@@ -86,6 +86,40 @@ test("if the likes of a blog are undefined they are set to zero", async () => {
   expect(likelessBlog[0].likes).toBe(0);
 });
 
+test("if a blog entry does not have both title and url status 400 received", async () => {
+  const blogWithNoTitle = {
+    author: "Kyle Simpson",
+    url: "https://github.com/getify/You-Dont-Know-JS",
+    likes: 9
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(blogWithNoTitle)
+    .expect(400);
+
+  const blogWithNoUrl = {
+    title: "You-Dont-Know-JS",
+    author: "Kyle Simpson",
+    likes: 9
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(blogWithNoUrl)
+    .expect(400);
+
+  const blogWithBothMissing = {
+    author: "Kyle Simpson",
+    likes: 9
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(blogWithBothMissing)
+    .expect(400);
+});
+
 afterAll(() => {
   server.close();
 });
