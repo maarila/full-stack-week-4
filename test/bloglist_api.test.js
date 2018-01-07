@@ -65,6 +65,27 @@ test("a valid blog can be added", async () => {
   expect(contents).toContain("So you want to be a wizard");
 });
 
+test("if the likes of a blog are undefined they are set to zero", async () => {
+  const newBlog = {
+    title: "Pagination in Web Forms",
+    author: "Janet M. Six",
+    url:
+      "https://www.uxmatters.com/mt/archives/2010/03/pagination-in-web-forms-evaluating-the-effectiveness-of-web-forms.php"
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await api.get("/api/blogs");
+  const likelessBlog = response.body.filter(
+    (blog) => blog.title === "Pagination in Web Forms"
+  );
+  expect(likelessBlog[0].likes).toBe(0);
+});
+
 afterAll(() => {
   server.close();
 });
