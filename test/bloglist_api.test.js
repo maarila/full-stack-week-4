@@ -22,11 +22,9 @@ const initialBlogs = [
 beforeAll(async () => {
   await Blog.remove({});
 
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+  const blogObjects = initialBlogs.map((blog) => new Blog(blog));
+  const promiseArray = blogObjects.map((blog) => blog.save());
+  await Promise.all(promiseArray);
 });
 
 test("blogs are returned as json", async () => {
@@ -45,6 +43,26 @@ test("a specific blog is within the returned blogs", async () => {
   const response = await api.get("/api/blogs");
   const contents = response.body.map((blog) => blog.title);
   expect(contents).toContain("Web Developer Roadmap 2018");
+});
+
+test("a valid blog can be added", async () => {
+  const newBlog = {
+    title: "So you want to be a wizard",
+    author: "Julia Evans",
+    url: "https://speakerdeck.com/jvns/so-you-want-to-be-a-wizard/",
+    likes: 3
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await api.get("/api/blogs");
+  const contents = response.body.map((blog) => blog.title);
+  expect(response.body.length).toBe(initialBlogs.length + 1);
+  expect(contents).toContain("So you want to be a wizard");
 });
 
 afterAll(() => {
