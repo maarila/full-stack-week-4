@@ -152,9 +152,11 @@ describe("deletion of a blog", async () => {
 
     const blogsAfterOperation = await blogsInDb();
     const titles = blogsAfterOperation.map((blog) => blog.title);
-    
+
     expect(titles).not.toContain(addedBlog.title);
-    expect(blogsAfterOperation.length).toBe(blogsAtBeginningOfOperation.length - 1);
+    expect(blogsAfterOperation.length).toBe(
+      blogsAtBeginningOfOperation.length - 1
+    );
   });
 });
 
