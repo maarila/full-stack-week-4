@@ -2,7 +2,13 @@ const supertest = require("supertest");
 const {app, server} = require("../index");
 const api = supertest(app);
 const Blog = require("../models/blog");
-const {initialBlogs, nonExistingId, blogsInDb} = require("./test_helper");
+const User = require("../models/user");
+const {
+  initialBlogs,
+  nonExistingId,
+  blogsInDb,
+  usersInDb
+} = require("./test_helper");
 
 describe("when there are initially some blogs saved", async () => {
   beforeAll(async () => {
@@ -157,6 +163,99 @@ describe("deletion of a blog", async () => {
     expect(blogsAfterOperation.length).toBe(
       blogsAtBeginningOfOperation.length - 1
     );
+  });
+});
+
+describe("creating new users", async () => {
+  test("POST /api/users fails if the username or password is less than 3 characters", async () => {
+    const usersBeforeOperation = await usersInDb();
+    const userWithTooShortUsername = new User({
+      username: "ma",
+      password: "secret",
+      name: "Maxwell Smart",
+      adult: true
+    });
+
+    const shortUsername = await api
+      .post("/api/users")
+      .send(userWithTooShortUsername)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(shortUsername.text).toContain(
+      "username and password must have at least 3 characters"
+    );
+
+    const userWithTooShortPassword = new User({
+      username: "maxwell",
+      password: "se",
+      name: "Maxwell Smart",
+      adult: true
+    });
+
+    const shortPassword = await api
+      .post("/api/users")
+      .send(userWithTooShortUsername)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(shortPassword.text).toContain(
+      "username and password must have at least 3 characters"
+    );
+
+    const usersAfterOperation = await usersInDb();
+    expect(usersBeforeOperation.length).toBe(usersAfterOperation.length);
+  });
+
+  test("POST /api/users fails if the username has already been taken", async () => {
+    const newUser = new User({
+      username: "humppa",
+      password: "humphamp",
+      name: "Tari Kapio",
+      adult: true
+    });
+
+    await api.post("/api/users").send(newUser);
+
+    const usersBeforeOperation = await usersInDb();
+
+    const userWithTakenUsername = new User({
+      username: "humppa",
+      password: "randommm",
+      name: "Teppo Mattiseppo",
+      adult: false
+    });
+
+    const result = await api
+      .post("/api/users")
+      .send(userWithTakenUsername)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.text).toContain("username must be unique");
+
+    const usersAfterOperation = await usersInDb();
+    expect(usersBeforeOperation.length).toBe(usersAfterOperation.length);
+  });
+
+  test("POST /api/users uses default adult value of true if undefined", async () => {
+    const adultUser = new User({
+      username: "rockon",
+      password: "rockers",
+      name: "Herra Badding"
+    });
+
+    const result = await api
+      .post("/api/users")
+      .send(adultUser)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAfterOperation = await usersInDb();
+    const adultOrNot = usersAfterOperation.filter(
+      (user) => user.name === "Herra Badding"
+    );
+
+    expect(adultOrNot[0].adult).toBe(true);
   });
 });
 
