@@ -132,6 +132,32 @@ describe("addition of a new blog", async () => {
   });
 });
 
+describe("deletion of a blog", async () => {
+  let addedBlog;
+
+  beforeAll(async () => {
+    addedBlog = new Blog({
+      title: "Deleting blogs by identification",
+      author: "Meself",
+      url: "http://www.deletebyid.com",
+      likes: 5
+    });
+    await addedBlog.save();
+  });
+
+  test("DELETE /api/blogs/:id succeeds with proper status code", async () => {
+    const blogsAtBeginningOfOperation = await blogsInDb();
+
+    await api.delete(`/api/blogs/${addedBlog._id}`).expect(204);
+
+    const blogsAfterOperation = await blogsInDb();
+    const titles = blogsAfterOperation.map((blog) => blog.title);
+    
+    expect(titles).not.toContain(addedBlog.title);
+    expect(blogsAfterOperation.length).toBe(blogsAtBeginningOfOperation.length - 1);
+  });
+});
+
 afterAll(() => {
   server.close();
 });
