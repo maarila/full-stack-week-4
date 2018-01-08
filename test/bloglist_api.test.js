@@ -2,122 +2,134 @@ const supertest = require("supertest");
 const {app, server} = require("../index");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const {initialBlogs, nonExistingId, blogsInDb} = require("./test_helper");
 
-const initialBlogs = [
-  {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url:
-      "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5
-  },
-  {
-    title: "Web Developer Roadmap 2018",
-    author: "Kamran Ahmed",
-    url: "https://github.com/kamranahmedse/developer-roadmap",
-    likes: 7
-  }
-];
+describe("when there are initially some blogs saved", async () => {
+  beforeAll(async () => {
+    await Blog.remove({});
 
-beforeAll(async () => {
-  await Blog.remove({});
+    const blogObjects = initialBlogs.map((blog) => new Blog(blog));
+    const promiseArray = blogObjects.map((blog) => blog.save());
+    await Promise.all(promiseArray);
+  });
 
-  const blogObjects = initialBlogs.map((blog) => new Blog(blog));
-  const promiseArray = blogObjects.map((blog) => blog.save());
-  await Promise.all(promiseArray);
+  test("all blogs are returned as json by GET /api/blogs", async () => {
+    const blogsInDatabase = await blogsInDb();
+    const response = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body.length).toBe(blogsInDatabase.length);
+
+    const returnedTitles = response.body.map((n) => n.title);
+    blogsInDatabase.forEach((blog) => {
+      expect(returnedTitles).toContain(blog.title);
+    });
+  });
+
+  test("GET /api/blogs/ returns a specific blog within the returned blogs", async () => {
+    const blogsInDatabase = await blogsInDb();
+    const aBlog = blogsInDatabase[0];
+
+    const response = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const contents = response.body[0];
+    expect(contents.title).toContain(aBlog.title);
+  });
 });
 
-test("blogs are returned as json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
-});
+describe("addition of a new blog", async () => {
+  test("POST /api/blogs succeeds with valid data", async () => {
+    const blogsAtBeginningOfOperation = await blogsInDb();
 
-test("all blogs are returned", async () => {
-  const response = await api.get("/api/blogs");
-  expect(response.body.length).toBe(initialBlogs.length);
-});
+    const newBlog = {
+      title: "So you want to be a wizard",
+      author: "Julia Evans",
+      url: "https://speakerdeck.com/jvns/so-you-want-to-be-a-wizard/",
+      likes: 3
+    };
 
-test("a specific blog is within the returned blogs", async () => {
-  const response = await api.get("/api/blogs");
-  const contents = response.body.map((blog) => blog.title);
-  expect(contents).toContain("Web Developer Roadmap 2018");
-});
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
 
-test("a valid blog can be added", async () => {
-  const newBlog = {
-    title: "So you want to be a wizard",
-    author: "Julia Evans",
-    url: "https://speakerdeck.com/jvns/so-you-want-to-be-a-wizard/",
-    likes: 3
-  };
+    const blogsAfterOperation = await blogsInDb();
 
-  await api
-    .post("/api/blogs")
-    .send(newBlog)
-    .expect(201)
-    .expect("Content-Type", /application\/json/);
+    expect(blogsAfterOperation.length).toBe(
+      blogsAtBeginningOfOperation.length + 1
+    );
 
-  const response = await api.get("/api/blogs");
-  const contents = response.body.map((blog) => blog.title);
-  expect(response.body.length).toBe(initialBlogs.length + 1);
-  expect(contents).toContain("So you want to be a wizard");
-});
+    const titles = blogsAfterOperation.map((blog) => blog.title);
+    expect(titles).toContain("So you want to be a wizard");
+  });
 
-test("if the likes of a blog are undefined they are set to zero", async () => {
-  const newBlog = {
-    title: "Pagination in Web Forms",
-    author: "Janet M. Six",
-    url:
-      "https://www.uxmatters.com/mt/archives/2010/03/pagination-in-web-forms-evaluating-the-effectiveness-of-web-forms.php"
-  };
+  test("POST /api/blogs with undefined likes succeeds and likes are set to zero", async () => {
+    const newBlog = {
+      title: "Pagination in Web Forms",
+      author: "Janet M. Six",
+      url:
+        "https://www.uxmatters.com/mt/archives/2010/03/pagination-in-web-forms-evaluating-the-effectiveness-of-web-forms.php"
+    };
 
-  await api
-    .post("/api/blogs")
-    .send(newBlog)
-    .expect(201)
-    .expect("Content-Type", /application\/json/);
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
 
-  const response = await api.get("/api/blogs");
-  const likelessBlog = response.body.filter(
-    (blog) => blog.title === "Pagination in Web Forms"
-  );
-  expect(likelessBlog[0].likes).toBe(0);
-});
+    const blogsAfterOperation = await blogsInDb();
 
-test("if a blog entry does not have both title and url status 400 received", async () => {
-  const blogWithNoTitle = {
-    author: "Kyle Simpson",
-    url: "https://github.com/getify/You-Dont-Know-JS",
-    likes: 9
-  };
+    const likelessBlog = blogsAfterOperation.filter(
+      (blog) => blog.title === "Pagination in Web Forms"
+    );
+    expect(likelessBlog[0].likes).toBe(0);
+  });
 
-  await api
-    .post("/api/blogs")
-    .send(blogWithNoTitle)
-    .expect(400);
+  test("POST /api/blogs fails without title and url information", async () => {
+    const blogsAtBeginningOfOperation = await blogsInDb();
 
-  const blogWithNoUrl = {
-    title: "You-Dont-Know-JS",
-    author: "Kyle Simpson",
-    likes: 9
-  };
+    const blogWithNoTitle = {
+      author: "Kyle Simpson",
+      url: "https://github.com/getify/You-Dont-Know-JS",
+      likes: 9
+    };
 
-  await api
-    .post("/api/blogs")
-    .send(blogWithNoUrl)
-    .expect(400);
+    await api
+      .post("/api/blogs")
+      .send(blogWithNoTitle)
+      .expect(400);
 
-  const blogWithBothMissing = {
-    author: "Kyle Simpson",
-    likes: 9
-  };
+    const blogWithNoUrl = {
+      title: "You-Dont-Know-JS",
+      author: "Kyle Simpson",
+      likes: 9
+    };
 
-  await api
-    .post("/api/blogs")
-    .send(blogWithBothMissing)
-    .expect(400);
+    await api
+      .post("/api/blogs")
+      .send(blogWithNoUrl)
+      .expect(400);
+
+    const blogWithBothMissing = {
+      author: "Kyle Simpson",
+      likes: 9
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(blogWithBothMissing)
+      .expect(400);
+
+    const blogsAfterOperation = await blogsInDb();
+
+    expect(blogsAfterOperation.length).toBe(blogsAtBeginningOfOperation.length);
+  });
 });
 
 afterAll(() => {
