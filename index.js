@@ -15,6 +15,9 @@ const mongoUrl = "mongodb://localhost/bloglist";
 mongoose.connect(config.mongoUrl);
 mongoose.Promise = global.Promise;
 
+const usersRouter= require("./controllers/users");
+app.use("/api/users", usersRouter);
+
 const blogsRouter = require("./controllers/blogs");
 app.use("/api/blogs", blogsRouter);
 
