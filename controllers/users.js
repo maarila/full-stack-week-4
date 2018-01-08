@@ -7,12 +7,19 @@ const formatUser = (user) => {
     id: user._id,
     username: user.username,
     name: user.name,
-    adult: user.adult
+    adult: user.adult,
+    blogs: user.blogs
   };
 };
 
 usersRouter.get("/", async (req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}).populate("blogs", {
+    _id: 1,
+    likes: 1,
+    title: 1,
+    author: 1,
+    url: 1
+  });
   res.json(users.map(formatUser));
 });
 
@@ -27,7 +34,7 @@ usersRouter.post("/", async (req, res) => {
     }
 
     const existingUser = await User.find({username: body.username});
-    
+
     if (existingUser.length > 0) {
       return res.status(400).json({error: "username must be unique"});
     }

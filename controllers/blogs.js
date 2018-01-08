@@ -1,9 +1,25 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
+
+const formatBlog = (blog) => {
+  return {
+    id: blog._id,
+    user: blog.user,
+    likes: blog.likes,
+    author: blog.author,
+    title: blog.title,
+    url: blog.url
+  };
+};
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
-  response.json(blogs);
+  const blogs = await Blog.find({}).populate("user", {
+    _id: 1,
+    username: 1,
+    name: 1
+  });
+  response.json(blogs.map(formatBlog));
 });
 
 blogsRouter.post("/", async (request, response) => {
@@ -14,7 +30,12 @@ blogsRouter.post("/", async (request, response) => {
       return response.status(400).json({error: "content missing"});
     }
 
+    // const user = await User.findById(body.id);
+    const users = await User.find({});
+    const user = users[3];
+
     const blog = new Blog({
+      user: user._id,
       title: body.title,
       author: body.author,
       url: body.url,
@@ -23,7 +44,10 @@ blogsRouter.post("/", async (request, response) => {
 
     const savedBlog = await blog.save();
 
-    response.status(201).json(savedBlog);
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
+
+    response.status(201).json(formatBlog(savedBlog));
   } catch (exception) {
     console.log(exception);
     response.status(500).json({error: "something went wrong"});
@@ -54,8 +78,8 @@ blogsRouter.put("/:id", async (request, response) => {
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
       new: true
     });
-    
-    response.json(updatedBlog);
+
+    response.json(formatBlog(updatedBlog));
   } catch (exception) {
     console.log(exception);
     response.status(400).send({error: "malformatted id"});
