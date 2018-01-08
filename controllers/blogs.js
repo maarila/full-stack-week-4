@@ -69,7 +69,7 @@ blogsRouter.delete("/:id", async (request, response) => {
     const blogOriginalUserId = blogToBeDeleted.user.toString();
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
-    if (decodedToken.id !== blogOriginalUserId) {
+    if (!request.token || decodedToken.id !== blogOriginalUserId) {
       return response.status(401).json({error: "not authorized to remove blog"})
     }
 

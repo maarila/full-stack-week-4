@@ -9,6 +9,7 @@ const {
   blogsInDb,
   usersInDb
 } = require("./test_helper");
+const jwt = require("jsonwebtoken");
 
 describe("when there are initially some blogs saved", async () => {
   beforeAll(async () => {
@@ -149,6 +150,22 @@ describe("deletion of a blog", async () => {
       likes: 5
     });
     await addedBlog.save();
+
+    const user = new User({
+      username: "jbond",
+      password: "bondjamesbond",
+      name: "James X. Bond",
+      adult: true
+    });
+    await api.post("/api/users").send(user);
+
+    const otherUser = new User({
+      username: "joulupukki",
+      password: "korvatunturi",
+      name: "Kris Kringle",
+      adult: true
+    });
+    await api.post("/api/users").send(otherUser);
   });
 
   test("DELETE /api/blogs/:id succeeds with proper status code", async () => {
@@ -164,6 +181,95 @@ describe("deletion of a blog", async () => {
       blogsAtBeginningOfOperation.length - 1
     );
   });
+
+  test.only("DELETE /api/blogs/:id fails if not blog's original adder", async () => {
+    const usersInDatabase = await usersInDb();
+    const bond = usersInDatabase.filter((user) => user.username === "jbond");
+    const pukki = usersInDatabase.filter(
+      (user) => user.username === "joulupukki"
+    );
+
+    const pukkiCredentials = {
+      username: "joulupukki",
+      password: "korvatunturi"
+    };
+
+    const loginPukki = await api
+      .post("/api/login")
+      .send(pukkiCredentials)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const pukkiToken = loginPukki.body.token;
+
+    const agentBlog = new Blog({
+      user: bond[0]._id,
+      title: "The Secret Life of a Secret Agent",
+      author: "Secret",
+      url: "http://www.not-gonna-tell.com",
+      likes: 7
+    });
+
+    await agentBlog.save();
+
+    const blogsAtBeginningOfOperation = await blogsInDb();
+    const deletoitavaBlogi = blogsAtBeginningOfOperation.filter(
+      (blog) => blog.author === "Secret"
+    );
+
+    await api
+      .delete(`/api/blogs/${deletoitavaBlogi[0]._id}`)
+      .set("Authorization", "bearer " + pukkiToken)
+      .expect(401)
+      .expect("Content-Type", /application\/json/);
+
+    const blogsAfterOperation = await blogsInDb();
+
+    expect(blogsAfterOperation.length).toBe(blogsAtBeginningOfOperation.length);
+  });
+
+    test.only("DELETE /api/blogs/:id is successful for blog's original adder", async () => {
+    const usersInDatabase = await usersInDb();
+    const bond = usersInDatabase.filter((user) => user.username === "jbond");
+
+    const bondCredentials = {
+      username: "jbond",
+      password: "bondjamesbond"
+    };
+
+    const loginBond = await api
+      .post("/api/login")
+      .send(bondCredentials)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const bondToken = loginBond.body.token;
+
+    const agentBlog = new Blog({
+      user: bond[0]._id,
+      title: "More Secrets from the Life of a Secret Agent",
+      author: "Secret Again",
+      url: "http://www.still-not-gonna-tell.com",
+      likes: 8
+    });
+
+    await agentBlog.save();
+
+    const blogsAtBeginningOfOperation = await blogsInDb();
+    const deletoitavaBlogi = blogsAtBeginningOfOperation.filter(
+      (blog) => blog.author === "Secret Again"
+    );
+
+    await api
+      .delete(`/api/blogs/${deletoitavaBlogi[0]._id}`)
+      .set("Authorization", "bearer " + bondToken)
+      .expect(204);
+
+    const blogsAfterOperation = await blogsInDb();
+
+    expect(blogsAfterOperation.length).toBe(blogsAtBeginningOfOperation.length - 1);
+  });
+
 });
 
 describe("creating new users", async () => {
