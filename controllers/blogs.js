@@ -3,7 +3,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
-
 const formatBlog = (blog) => {
   return {
     id: blog._id,
@@ -70,7 +69,9 @@ blogsRouter.delete("/:id", async (request, response) => {
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
     if (!request.token || decodedToken.id !== blogOriginalUserId) {
-      return response.status(401).json({error: "not authorized to remove blog"})
+      return response
+        .status(401)
+        .json({error: "not authorized to remove blog"});
     }
 
     await Blog.findByIdAndRemove(request.params.id);
@@ -86,6 +87,7 @@ blogsRouter.put("/:id", async (request, response) => {
     const body = request.body;
 
     const blog = {
+      user: body.user,
       title: body.title,
       author: body.author,
       url: body.url,
@@ -94,6 +96,10 @@ blogsRouter.put("/:id", async (request, response) => {
 
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
       new: true
+    }).populate("user", {
+      _id: 1,
+      username: 1,
+      name: 1
     });
 
     response.json(formatBlog(updatedBlog));
