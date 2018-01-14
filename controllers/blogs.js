@@ -23,6 +23,20 @@ blogsRouter.get("/", async (request, response) => {
   response.json(blogs.map(formatBlog));
 });
 
+blogsRouter.get("/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (blog) {
+      res.json(formatNote(note));
+    } else {
+      res.status(404).end();
+    }
+  } catch (exception) {
+    console.log(exception);
+    res.status(400).send({error: "malformatted id"});
+  }
+});
+
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
   try {
@@ -65,12 +79,12 @@ blogsRouter.post("/", async (request, response) => {
 blogsRouter.delete("/:id", async (request, response) => {
   try {
     const blogToBeDeleted = await Blog.findById(request.params.id);
-    
+
     if (blogToBeDeleted.user === undefined) {
       await Blog.findByIdAndRemove(request.params.id);
       return response.status(204).end();
     }
-    
+
     const blogOriginalUserId = blogToBeDeleted.user.toString();
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
