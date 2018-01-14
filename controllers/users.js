@@ -23,6 +23,20 @@ usersRouter.get("/", async (req, res) => {
   res.json(users.map(formatUser));
 });
 
+usersRouter.get("/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      res.json(formatNote(note));
+    } else {
+      res.status(404).end();
+    }
+  } catch (exception) {
+    console.log(exception);
+    res.status(400).send({error: "malformatted id"});
+  }
+});
+
 usersRouter.post("/", async (req, res) => {
   try {
     const body = req.body;
