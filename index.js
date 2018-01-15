@@ -8,6 +8,7 @@ const Blog = require("./models/blog");
 const config = require("./utils/config");
 const middleware = require("./utils/middleware");
 
+app.use(express.static("build"));
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -27,7 +28,7 @@ app.use("/api/users", usersRouter);
 const blogsRouter = require("./controllers/blogs");
 app.use("/api/blogs", blogsRouter);
 
-const PORT = config.port;
+const PORT = process.env.PORT || config.port;
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
