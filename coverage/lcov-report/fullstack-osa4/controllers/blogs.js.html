@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for fullstack-osa4/controllers/blogs.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">All files</a> / <a href="index.html">fullstack-osa4/controllers</a> blogs.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">48.48% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>32/66</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">29.17% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>7/24</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">57.14% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>4/7</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">48.48% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>32/66</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const blogsRouter = require("express").Router();
+const Blog = require("../models/blog");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+&nbsp;
+const formatBlog = (blog) =&gt; {
+  return {
+    id: blog._id,
+    user: blog.user,
+    likes: blog.likes,
+    author: blog.author,
+    title: blog.title,
+    url: blog.url,
+    comments: blog.comments
+  };
+};
+&nbsp;
+blogsRouter.get("/", async (request, response) =&gt; {
+  const blogs = await Blog.find({}).populate("user", {
+    _id: 1,
+    username: 1,
+    name: 1
+  });
+  response.json(blogs.map(formatBlog));
+});
+&nbsp;
+blogsRouter.get("/:id", async (req, res) =&gt; {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (blog) {
+<span class="cstat-no" title="statement not covered" >      res.json(formatNote(note));</span>
+    } else {
+      res.status(404).end();
+    }
+  } catch (exception) {
+    console.log(exception);
+    res.status(400).send({error: "malformatted id"});
+  }
+});
+&nbsp;
+blogsRouter.post("/", <span class="fstat-no" title="function not covered" >as</span>ync (request, response) =&gt; {
+  const body = <span class="cstat-no" title="statement not covered" >request.body;</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const decodedToken = <span class="cstat-no" title="statement not covered" >jwt.verify(request.token, process.env.SECRET);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!request.token || !decodedToken.id) {</span>
+<span class="cstat-no" title="statement not covered" >      return response.status(401).json({error: "token missing or invalid"});</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (body.title === undefined || body.url === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >      return response.status(400).json({error: "content missing"});</span>
+    }
+&nbsp;
+    const user = <span class="cstat-no" title="statement not covered" >await User.findById(decodedToken.id);</span>
+&nbsp;
+    const blog = <span class="cstat-no" title="statement not covered" >new Blog({</span>
+      user: user,
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0,
+      comments: []
+    });
+&nbsp;
+    const savedBlog = <span class="cstat-no" title="statement not covered" >await blog.save();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    user.blogs = user.blogs.concat(savedBlog._id);</span>
+<span class="cstat-no" title="statement not covered" >    await user.save();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    response.status(201).json(formatBlog(savedBlog));</span>
+  } catch (exception) {
+<span class="cstat-no" title="statement not covered" >    if (exception.name === "JsonWebTokenError") {</span>
+<span class="cstat-no" title="statement not covered" >      response.status(401).json({error: exception.message});</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      console.log(exception);</span>
+<span class="cstat-no" title="statement not covered" >      response.status(500).json({error: "something went wrong"});</span>
+    }
+  }
+});
+&nbsp;
+blogsRouter.put("/:id/comments", <span class="fstat-no" title="function not covered" >as</span>ync (request, response) =&gt; {
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const body = <span class="cstat-no" title="statement not covered" >request.body;</span>
+&nbsp;
+    const blog = <span class="cstat-no" title="statement not covered" >{</span>
+      user: body.user,
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0,
+      comments: body.comments.concat(body.content)
+    };
+&nbsp;
+    const updatedBlog = <span class="cstat-no" title="statement not covered" >await Blog.findByIdAndUpdate(request.params.id, blog, {</span>
+      new: true
+    }).populate("user", {
+      _id: 1,
+      username: 1,
+      name: 1
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    response.json(formatBlog(updatedBlog));</span>
+  } catch (exception) {
+<span class="cstat-no" title="statement not covered" >    console.log(exception);</span>
+<span class="cstat-no" title="statement not covered" >    response.status(400).send({error: "malformatted id"});</span>
+  }
+});
+&nbsp;
+blogsRouter.delete("/:id", async (request, response) =&gt; {
+  try {
+    const blogToBeDeleted = await Blog.findById(request.params.id);
+&nbsp;
+    if (blogToBeDeleted.user === undefined) {
+      await Blog.findByIdAndRemove(request.params.id);
+      return response.status(204).end();
+    }
+&nbsp;
+    const blogOriginalUserId = blogToBeDeleted.user.toString();
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+&nbsp;
+    if (!request.token || decodedToken.id !== blogOriginalUserId) {
+      return response
+        .status(401)
+        .json({error: "not authorized to remove blog"});
+    }
+&nbsp;
+    await Blog.findByIdAndRemove(request.params.id);
+    response.status(204).end();
+  } catch (exception) {
+<span class="cstat-no" title="statement not covered" >    console.log(exception);</span>
+<span class="cstat-no" title="statement not covered" >    response.status(400).send({error: "malformatted id"});</span>
+  }
+});
+&nbsp;
+blogsRouter.put("/:id", <span class="fstat-no" title="function not covered" >as</span>ync (request, response) =&gt; {
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const body = <span class="cstat-no" title="statement not covered" >request.body;</span>
+&nbsp;
+    const blog = <span class="cstat-no" title="statement not covered" >{</span>
+      user: body.user,
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0
+    };
+&nbsp;
+    const updatedBlog = <span class="cstat-no" title="statement not covered" >await Blog.findByIdAndUpdate(request.params.id, blog, {</span>
+      new: true
+    }).populate("user", {
+      _id: 1,
+      username: 1,
+      name: 1
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    response.json(formatBlog(updatedBlog));</span>
+  } catch (exception) {
+<span class="cstat-no" title="statement not covered" >    console.log(exception);</span>
+<span class="cstat-no" title="statement not covered" >    response.status(400).send({error: "malformatted id"});</span>
+  }
+});
+&nbsp;
+module.exports = blogsRouter;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Mon Jan 15 2018 19:10:18 GMT+0200 (EET)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

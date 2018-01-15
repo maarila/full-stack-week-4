@@ -27,7 +27,7 @@ usersRouter.get("/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (user) {
-      res.json(formatNote(note));
+      res.json(formatUser(user));
     } else {
       res.status(404).end();
     }
