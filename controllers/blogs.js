@@ -10,7 +10,8 @@ const formatBlog = (blog) => {
     likes: blog.likes,
     author: blog.author,
     title: blog.title,
-    url: blog.url
+    url: blog.url,
+    comments: blog.comments
   };
 };
 
@@ -57,7 +58,8 @@ blogsRouter.post("/", async (request, response) => {
       title: body.title,
       author: body.author,
       url: body.url,
-      likes: body.likes || 0
+      likes: body.likes || 0,
+      comments: []
     });
 
     const savedBlog = await blog.save();
@@ -73,6 +75,34 @@ blogsRouter.post("/", async (request, response) => {
       console.log(exception);
       response.status(500).json({error: "something went wrong"});
     }
+  }
+});
+
+blogsRouter.put("/:id/comments", async (request, response) => {
+  try {
+    const body = request.body;
+
+    const blog = {
+      user: body.user,
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0,
+      comments: body.comments.concat(body.content)
+    };
+
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+      new: true
+    }).populate("user", {
+      _id: 1,
+      username: 1,
+      name: 1
+    });
+
+    response.json(formatBlog(updatedBlog));
+  } catch (exception) {
+    console.log(exception);
+    response.status(400).send({error: "malformatted id"});
   }
 });
 
