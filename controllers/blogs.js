@@ -1,5 +1,6 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
+const BlogComment = require("../models/blogComment");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
@@ -10,8 +11,15 @@ const formatBlog = (blog) => {
     likes: blog.likes,
     author: blog.author,
     title: blog.title,
-    url: blog.url,
-    comments: blog.comments
+    url: blog.url
+  };
+};
+
+const formatBlogComment = (blogComment) => {
+  return {
+    id: blogComment._id,
+    blogId: blogComment.blogId,
+    comment: blogComment.comment
   };
 };
 
@@ -22,6 +30,11 @@ blogsRouter.get("/", async (request, response) => {
     name: 1
   });
   response.json(blogs.map(formatBlog));
+});
+
+blogsRouter.get("/comments", async (request, response) => {
+  const comments = await BlogComment.find({});
+  response.json(comments.map(formatBlogComment));
 });
 
 blogsRouter.get("/:id", async (req, res) => {
@@ -58,8 +71,7 @@ blogsRouter.post("/", async (request, response) => {
       title: body.title,
       author: body.author,
       url: body.url,
-      likes: body.likes || 0,
-      comments: []
+      likes: body.likes || 0
     });
 
     const savedBlog = await blog.save();
@@ -78,31 +90,29 @@ blogsRouter.post("/", async (request, response) => {
   }
 });
 
-blogsRouter.put("/:id/comments", async (request, response) => {
+blogsRouter.post("/:id/comments", async (request, response) => {
+  const body = request.body;
+
   try {
-    const body = request.body;
+    if (body.comment === undefined) {
+      return response.status(400).json({error: "content missing"});
+    }
 
-    const blog = {
-      user: body.user,
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes || 0,
-      comments: body.comments.concat(body.content)
-    };
-
-    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
-      new: true
-    }).populate("user", {
-      _id: 1,
-      username: 1,
-      name: 1
+    const blogComment = new BlogComment({
+      blogId: request.params.id,
+      comment: body.comment
     });
 
-    response.json(formatBlog(updatedBlog));
+    const savedBlogComment = await blogComment.save();
+
+    response.status(201).json(formatBlogComment(savedBlogComment));
   } catch (exception) {
-    console.log(exception);
-    response.status(400).send({error: "malformatted id"});
+    if (exception.name === "JsonWebTokenError") {
+      response.status(401).json({error: exception.message});
+    } else {
+      console.log(exception);
+      response.status(500).json({error: "something went wrong"});
+    }
   }
 });
 
